@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import Home from './HomeComponent';
-import Directory from './DirectoryComponents';
+import Directory from './DirectoryComponent';
+import About from './AboutComponent';
+import Contact from './ContactComponent';
 import CampsiteInfo from './CampsiteInfoComponent';
 import { View, Platform } from 'react-native';
-import { createStackNavigator, createDrawerNavigator } from 'react-navigation' ;
+import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
 import ExpoStatusBar from 'expo-status-bar/build/ExpoStatusBar';
 
 const DirectoryNavigator = createStackNavigator(
@@ -42,10 +44,46 @@ const HomeNavigator = createStackNavigator(
     }
 );
 
+const AboutNavigator = createStackNavigator(
+    {
+        Home: { screen: About },
+    },
+    {
+        navigationOptions: {
+            headerStyle: {
+                backgroundColor: '#5637DD'
+            },
+            headerTinitColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            }
+        }
+    }
+);
+
+const ContactNavigator = createStackNavigator(
+    {
+        Home: { screen: Contact },
+    },
+    {
+        navigationOptions: {
+            headerStyle: {
+                backgroundColor: '#5637DD'
+            },
+            headerTinitColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            }
+        }
+    }
+);
+
 const MainNavigator = createDrawerNavigator(
     {
         Home: { screen: HomeNavigator },
-        Directory: { screen: DirectoryNavigator }
+        Directory: { screen: DirectoryNavigator },
+        About: { screen: AboutNavigator },
+        Contact: { screen: ContactNavigator }
     },
     {
         drawerBackgroundColor: '#CEC8FF'
@@ -59,7 +97,7 @@ class Main extends Component {
             <View style={{
                 flex: 1,
                 paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight
-                }}>
+            }}>
                 <MainNavigator />
             </View>
         );
