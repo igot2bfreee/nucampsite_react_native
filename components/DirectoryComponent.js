@@ -8,7 +8,7 @@ const mapStateToProps = state => {
     return {
         campsites: state.campsites
     };
-}
+};
 
 class Directory extends Component {
 
@@ -18,7 +18,7 @@ class Directory extends Component {
 
     render() {
         const { navigate } = this.props.navigation;
-        const renderDirectoryItem = ({ item }) => {
+        const renderDirectoryItem = ({item}) => {
             return (
                 <Tile
                     title={item.name}
@@ -38,7 +38,6 @@ class Directory extends Component {
             />
         );
     }
-    
 }
 
 export default connect(mapStateToProps)(Directory);

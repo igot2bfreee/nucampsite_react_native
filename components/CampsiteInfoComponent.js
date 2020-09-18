@@ -9,7 +9,7 @@ const mapStateToProps = state => {
         campsites: state.campsites,
         comments: state.comments
     };
-}
+};
 
 function RenderCampsite(props) {
 
@@ -19,7 +19,7 @@ function RenderCampsite(props) {
         return (
             <Card 
                 featuredTitle={campsite.name}
-                image={{ uri: baseUrl = campsite.image}}>
+                image={{ uri: baseUrl + campsite.image}}>
                 <Text style={{margin:10}}>
                     {campsite.description}
                 </Text>

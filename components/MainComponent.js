@@ -10,7 +10,8 @@ import ExpoStatusBar from 'expo-status-bar/build/ExpoStatusBar';
 import { Icon } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
 import { connect } from 'react-redux';
-import { fetchCampsites, fetchComments, fetchPromotions, fetchPartners } from '../redux/ActionCreators';
+import { fetchCampsites, fetchComments, fetchPromotions,
+    fetchPartners } from '../redux/ActionCreators';
 
 const mapDispatchToProps = {
     fetchCampsites,

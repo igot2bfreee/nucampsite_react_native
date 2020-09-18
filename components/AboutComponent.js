@@ -8,7 +8,7 @@ const mapStateToProps = state => {
     return {
         partners: state.partners
     };
-}
+};
 
 function Mission() {
     return (
@@ -33,7 +33,7 @@ class About extends Component {
                 <ListItem
                     title={item.name}
                     subtitle={item.description}
-                    leftAvatar={{ source: {uri: baseUrl + item.image} }}
+                    leftAvatar={{source: {uri: baseUrl + item.image}}}
                 />
             );
         };
