@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Text, ScrollView } from 'react-native';
-import { Card } from 'react-native-elements';
+import { ScrollView } from 'react-native';
+import { Text, Card } from 'react-native-elements';
 
 class Contact extends Component {
     constructor(props) {
@@ -9,14 +9,15 @@ class Contact extends Component {
     
     static navigationOptions = {
         title: 'Contact Us'
-    };
+    }
     
     render() {
         return (
-            <ScrollView >
+            <ScrollView>
                 <Card 
                     title="Contact Information"
-                    wrapperStyle={{margin:10}} >
+                    wrapperStyle={{margin:10}}
+                >
                     <Text>1 Nucamp Way</Text>
                     <Text>Seattle, WA 98001</Text>
                     <Text style={{marginBottom:10}}>U.S.A.</Text>
@@ -29,3 +30,4 @@ class Contact extends Component {
 }
 
 export default Contact;
+
