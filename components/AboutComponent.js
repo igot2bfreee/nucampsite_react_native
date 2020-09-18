@@ -3,7 +3,6 @@ import { Text, ScrollView, FlatList } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
 import { PARTNERS } from '../shared/partners';
 
-
 function Mission() {
     return (
         <Card
@@ -28,7 +27,6 @@ class About extends Component {
     }
     
     render() {
-        
         const renderPartner = ({ item }) => {
             return (
                 <ListItem
@@ -40,7 +38,7 @@ class About extends Component {
         };
 
         return (
-            <ScrollView>
+            <ScrollView >
                 <Mission />
                 <Card title="Community Partners">
                     <FlatList
