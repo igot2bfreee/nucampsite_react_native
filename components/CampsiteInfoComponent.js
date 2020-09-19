@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet } from 'react-native';
-import { Card, Icon } from 'react-native-elements';
+import { Text, TextInput, View, ScrollView, FlatList, Modal, Button, StyleSheet } from 'react-native';
+import { Card, Icon, Input, Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from "../shared/baseUrl";
 import { postFavorite } from '../redux/ActionCreators';
@@ -83,7 +83,10 @@ class CampsiteInfo extends Component {
         super(props);
 
         this.state = {
-            showModal: false
+            showModal: false,
+            rating: 5,
+            author: '',
+            text: ''
         }
     }
 
@@ -91,6 +94,24 @@ class CampsiteInfo extends Component {
         this.setState({showModal: !this.state.showModal});
     }
 
+    //what am I doing here??? - yep, think I got it... task 2
+    handleComment(campsiteId) {
+        console.log(JSON.stringify(this.state));
+        this.toggleModal();
+    }
+
+    resetForm() {
+        this.setState({
+            rating: 5,
+            author: '',
+            text: ''
+        });
+    }
+    //what am I doing here??? - yep, think I got it... task 2
+
+    //am i using TextInput correctly and in the right place?
+
+    
     markFavorite(campsiteId) {
         this.props.postFavorite(campsiteId);
     }
@@ -108,24 +129,70 @@ class CampsiteInfo extends Component {
                 <RenderCampsite campsite={campsite} 
                     favorite={this.props.favorites.includes(campsiteId)}
                     markFavorite={() => this.markFavorite(campsiteId)}
-                    //is this the right place to put this onShowModal prop?//
+                    //is this the right place to put this onShowModal prop? task 1//
                     onShowModal={() => this.toggleModal()}
                 />
                 <RenderComments comments={comments} />
-                <Modal //rating and text modal//
+                <Modal //rating and text modal task 1//
                     animationType={'slide'}
                     transparent={false}
                     visible={this.state.showModal}
                     onRequestClose={() => this.toggleModal()}>
-                    <View style={styles.modalStyle}>
-                        <View /* is this right place for this "inline style" */ style={{margin: 10}}>
-                            <Button
-                                onPress={() => {
-                                    this.toggleModal();
-                                }}
-                                color='#808080'
-                                title='Cancel'
+                    <View style={styles.modalStyle} /* oy vey - more shiznit for task 2 */>
+                        <View>
+                            <Rating //holy crap it works!!
+                                imageSize={40} //check
+                                type='star' //check
+                                startingValue={this.state.rating} //check
+                                style={{paddingVertical: 10}} //check
+                                onFinishRating={(rating)=>this.setState({rating: rating})} //check
+                                // don't need fractions={0}
+                                ratingCount={5} //check
+                                showRating //check
                             />
+                            <Input
+                                placeholder='Author' 
+                                leftIcon={
+                                    <Icon
+                                    name='user-o'
+                                    type='font-awesome'
+                                    containerStyle={{paddingRight: 10}}
+                                    size={24}
+                                    color='black'
+                                    />
+                                }
+                            />
+                            
+                            <Input
+                                placeholder='Comment'
+                                leftIcon={
+                                    <Icon
+                                    name='comment-o'
+                                    type='font-awesome'
+                                    containerStyle={{paddingRight: 10}}
+                                    size={24}
+                                    color='black'
+                                    />
+                                }
+                            />
+                            <Button
+                                color='#5637DD'
+                                title='Submit'
+                                onPress={() => {
+                                    this.handleComment(campsiteId); //campsiteId argument in the right place??
+                                    this.resetForm();
+                                }} 
+                            />
+                            <View /* is this right place for this "inline style task 1" */ style={{margin: 10}}>
+                                <Button
+                                    onPress={() => {
+                                        this.toggleModal();
+                                        this.resetForm();
+                                    }}
+                                    color='#808080'
+                                    title='Cancel'
+                                />
+                            </View>
                         </View>
                     </View>
                 </Modal>
@@ -155,7 +222,7 @@ const styles = StyleSheet.create({
 export default connect(mapStateToProps, mapDispatchToProps)(CampsiteInfo);
 
 /*
-deleted from copied over reservation modal - still need?
+deleted from copied over reservation modal - still need? task 1
 <Text style={styles.modalTitle}>Search Campsite Reservations</Text>
 <Text style={styles.modalText}>Number of Campers: {this.state.campers}</Text>
 <Text style={styles.modalText}>Hike-In?: {this.state.hikeIn ? 'Yes' : 'No'}</Text>
