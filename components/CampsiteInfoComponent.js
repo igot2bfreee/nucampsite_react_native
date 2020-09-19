@@ -3,7 +3,7 @@ import { Text, TextInput, View, ScrollView, FlatList, Modal, Button, StyleSheet 
 import { Card, Icon, Input, Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from "../shared/baseUrl";
-import { postFavorite } from '../redux/ActionCreators';
+import { postFavorite, postComment } from '../redux/ActionCreators';
 
 const mapStateToProps = state => {
     return {
@@ -14,7 +14,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-    postFavorite: campsiteId => (postFavorite(campsiteId))
+    postFavorite: campsiteId => (postFavorite(campsiteId)),
+    postComment: (campsiteId, rating, author, text) => (postComment(campsiteId, rating, author, text))
 };
 
 function RenderCampsite(props) {
@@ -63,16 +64,14 @@ function RenderComments({comments}) {
                 <Rating 
                     startingValue={+item.rating}
                     readonly
-                    type='star'
                     imageSize={10}
                     style={{alignItems: 'flex-start', paddingVertical: '5%'}}
-                    ratingCount={5}
+                    fractions={0}
                 />
                 <Text style={{fontSize: 12}}>{`-- ${item.author}, ${item.date}`}</Text>
             </View>
         );
     };
-
     return(
         <Card title='Comments'>
             <FlatList
@@ -103,7 +102,7 @@ class CampsiteInfo extends Component {
 
     //what am I doing here??? - yep, think I got it... task 2
     handleComment(campsiteId) {
-        console.log(JSON.stringify(this.state));
+        this.props.postComment(campsiteId, this.state.rating, this.state.author, this.state.text)
         this.toggleModal();
     }
 
@@ -116,9 +115,6 @@ class CampsiteInfo extends Component {
     }
     //what am I doing here??? - yep, think I got it... task 2
 
-    //am i using TextInput correctly and in the right place?
-
-    
     markFavorite(campsiteId) {
         this.props.postFavorite(campsiteId);
     }
@@ -164,13 +160,13 @@ class CampsiteInfo extends Component {
                                     <Icon
                                     name='user-o'
                                     type='font-awesome'
+                                    value={this.state.author}
                                     containerStyle={{paddingRight: 10}}
                                     size={24}
                                     color='black'
                                     />
                                 }
                                 onChangeText={author => {this.setState({author: author})}}
-                                value={this.state.author}
                             />
                             <Input
                                 placeholder='Comment'
@@ -178,13 +174,13 @@ class CampsiteInfo extends Component {
                                     <Icon
                                     name='comment-o'
                                     type='font-awesome'
+                                    value={this.state.comments}
                                     containerStyle={{paddingRight: 10}}
                                     size={24}
                                     color='black'
                                     />
                                 }
-                                onChangeText={comments => {this.setState({comments: comments})}}
-                                value={this.state.comments}
+                                onChangeText={text => {this.setState({text: text})}}
                             />
                             <Button
                                 color='#5637DD'
