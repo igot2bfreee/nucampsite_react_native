@@ -60,7 +60,14 @@ function RenderComments({comments}) {
         return(
             <View style={{margin:10}}>
                 <Text style={{fontSize: 14}}>{item.text}</Text>
-                <Text style={{fontSize: 12}}>{item.rating} Stars</Text>
+                <Rating 
+                    startingValue={+item.rating}
+                    readonly
+                    type='star'
+                    imageSize={10}
+                    style={{alignItems: 'flex-start', paddingVertical: '5%'}}
+                    ratingCount={5}
+                />
                 <Text style={{fontSize: 12}}>{`-- ${item.author}, ${item.date}`}</Text>
             </View>
         );
@@ -152,6 +159,7 @@ class CampsiteInfo extends Component {
                             />
                             <Input
                                 placeholder='Author' 
+                                /* ok, so Input and TextInput are like FlatList and ListItem? need to use inputComponent prop of Input to accept TextInput?FlatList = Input | ListItem = TextInput???  inputComponent={TextInput} instead of renderItem --> NO!!! as usual, over complicating... */
                                 leftIcon={
                                     <Icon
                                     name='user-o'
@@ -161,8 +169,9 @@ class CampsiteInfo extends Component {
                                     color='black'
                                     />
                                 }
+                                onChangeText={author => {this.setState({author: author})}}
+                                value={this.state.author}
                             />
-                            
                             <Input
                                 placeholder='Comment'
                                 leftIcon={
@@ -174,6 +183,8 @@ class CampsiteInfo extends Component {
                                     color='black'
                                     />
                                 }
+                                onChangeText={comments => {this.setState({comments: comments})}}
+                                value={this.state.comments}
                             />
                             <Button
                                 color='#5637DD'
