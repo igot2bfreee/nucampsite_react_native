@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList } from 'react-native';
+import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from "../shared/baseUrl";
@@ -29,14 +29,25 @@ function RenderCampsite(props) {
                 <Text style={{margin:10}}>
                     {campsite.description}
                 </Text>
-                <Icon 
-                    name={props.favorite ? 'heart' : 'heart-o'}
-                    type='font-awesome'
-                    color='#f50'
-                    raised
-                    reverse
-                    onPress={() => props.favorite ? console.log('Already set as a fasvorite') : props.markFavorite()}
-                />
+                    <View style={styles.cardRow}>
+                        <Icon 
+                            name={props.favorite ? 'heart' : 'heart-o'}
+                            type='font-awesome'
+                            color='#f50'
+                            raised
+                            reverse
+                            onPress={() => props.favorite ? console.log('Already set as a fasvorite') : props.markFavorite()}
+                        />
+                        <Icon 
+                            style={styles.cardItem}
+                            name='pencil'
+                            type='font-awesome'
+                            color='#5637DD'
+                            raised
+                            reverse
+                            onPress={() => props.onShowModal()}
+                        />    
+                    </View>
             </Card>
         );
     }
@@ -68,6 +79,18 @@ function RenderComments({comments}) {
 
 class CampsiteInfo extends Component {
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            showModal: false
+        }
+    }
+
+    toggleModal() {
+        this.setState({showModal: !this.state.showModal});
+    }
+
     markFavorite(campsiteId) {
         this.props.postFavorite(campsiteId);
     }
@@ -85,11 +108,56 @@ class CampsiteInfo extends Component {
                 <RenderCampsite campsite={campsite} 
                     favorite={this.props.favorites.includes(campsiteId)}
                     markFavorite={() => this.markFavorite(campsiteId)}
+                    //is this the right place to put this onShowModal prop?//
+                    onShowModal={() => this.toggleModal()}
                 />
                 <RenderComments comments={comments} />
+                <Modal //rating and text modal//
+                    animationType={'slide'}
+                    transparent={false}
+                    visible={this.state.showModal}
+                    onRequestClose={() => this.toggleModal()}>
+                    <View style={styles.modalStyle}>
+                        <View /* is this right place for this "inline style" */ style={{margin: 10}}>
+                            <Button
+                                onPress={() => {
+                                    this.toggleModal();
+                                }}
+                                color='#808080'
+                                title='Cancel'
+                            />
+                        </View>
+                    </View>
+                </Modal>
             </ScrollView>
         );
     }
 }
 
+const styles = StyleSheet.create({
+    cardRow: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        flexDirection: 'row',
+        margin: 20
+    },
+    cardItem: {
+        flex: 1,
+        margin: 10
+    },
+    modalStyle: {
+        justifyContent: 'center',
+        margin: 20
+    }
+});
+
 export default connect(mapStateToProps, mapDispatchToProps)(CampsiteInfo);
+
+/*
+deleted from copied over reservation modal - still need?
+<Text style={styles.modalTitle}>Search Campsite Reservations</Text>
+<Text style={styles.modalText}>Number of Campers: {this.state.campers}</Text>
+<Text style={styles.modalText}>Hike-In?: {this.state.hikeIn ? 'Yes' : 'No'}</Text>
+<Text style={styles.modalText}>Date: {this.state.date}</Text>
+*/
