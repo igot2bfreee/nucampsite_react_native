@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList } from 'react-native';
-import { Card, Icon } from 'react-native-elements';
+import { Text, TextInput, View, ScrollView, FlatList, Modal, Button, StyleSheet } from 'react-native';
+import { Card, Icon, Input, Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from "../shared/baseUrl";
-import { postFavorite } from '../redux/ActionCreators';
+import { postFavorite, postComment } from '../redux/ActionCreators';
 
 const mapStateToProps = state => {
     return {
@@ -14,7 +14,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-    postFavorite: campsiteId => (postFavorite(campsiteId))
+    postFavorite: campsiteId => (postFavorite(campsiteId)),
+    postComment: (campsiteId, rating, author, text) => (postComment(campsiteId, rating, author, text))
 };
 
 function RenderCampsite(props) {
@@ -29,14 +30,25 @@ function RenderCampsite(props) {
                 <Text style={{margin:10}}>
                     {campsite.description}
                 </Text>
-                <Icon 
-                    name={props.favorite ? 'heart' : 'heart-o'}
-                    type='font-awesome'
-                    color='#f50'
-                    raised
-                    reverse
-                    onPress={() => props.favorite ? console.log('Already set as a fasvorite') : props.markFavorite()}
-                />
+                    <View style={styles.cardRow}>
+                        <Icon 
+                            name={props.favorite ? 'heart' : 'heart-o'}
+                            type='font-awesome'
+                            color='#f50'
+                            raised
+                            reverse
+                            onPress={() => props.favorite ? console.log('Already set as a fasvorite') : props.markFavorite()}
+                        />
+                        <Icon 
+                            style={styles.cardItem}
+                            name='pencil'
+                            type='font-awesome'
+                            color='#5637DD'
+                            raised
+                            reverse
+                            onPress={() => props.onShowModal()}
+                        />    
+                    </View>
             </Card>
         );
     }
@@ -49,12 +61,17 @@ function RenderComments({comments}) {
         return(
             <View style={{margin:10}}>
                 <Text style={{fontSize: 14}}>{item.text}</Text>
-                <Text style={{fontSize: 12}}>{item.rating} Stars</Text>
+                <Rating 
+                    startingValue={+item.rating}
+                    readonly
+                    imageSize={10}
+                    style={{alignItems: 'flex-start', paddingVertical: '5%'}}
+                    fractions={0}
+                />
                 <Text style={{fontSize: 12}}>{`-- ${item.author}, ${item.date}`}</Text>
             </View>
         );
     };
-
     return(
         <Card title='Comments'>
             <FlatList
@@ -67,6 +84,36 @@ function RenderComments({comments}) {
 }
 
 class CampsiteInfo extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            showModal: false,
+            rating: 5,
+            author: '',
+            text: ''
+        }
+    }
+
+    toggleModal() {
+        this.setState({showModal: !this.state.showModal});
+    }
+
+    //what am I doing here??? - yep, think I got it... task 2
+    handleComment(campsiteId) {
+        this.props.postComment(campsiteId, this.state.rating, this.state.author, this.state.text)
+        this.toggleModal();
+    }
+
+    resetForm() {
+        this.setState({
+            rating: 5,
+            author: '',
+            text: ''
+        });
+    }
+    //what am I doing here??? - yep, think I got it... task 2
 
     markFavorite(campsiteId) {
         this.props.postFavorite(campsiteId);
@@ -85,11 +132,106 @@ class CampsiteInfo extends Component {
                 <RenderCampsite campsite={campsite} 
                     favorite={this.props.favorites.includes(campsiteId)}
                     markFavorite={() => this.markFavorite(campsiteId)}
+                    //is this the right place to put this onShowModal prop? task 1//
+                    onShowModal={() => this.toggleModal()}
                 />
                 <RenderComments comments={comments} />
+                <Modal //rating and text modal task 1//
+                    animationType={'slide'}
+                    transparent={false}
+                    visible={this.state.showModal}
+                    onRequestClose={() => this.toggleModal()}>
+                    <View style={styles.modalStyle} /* oy vey - more shiznit for task 2 */>
+                        <View>
+                            <Rating //holy crap it works!!
+                                imageSize={40} //check
+                                type='star' //check
+                                startingValue={this.state.rating} //check
+                                style={{paddingVertical: 10}} //check
+                                onFinishRating={(rating)=>this.setState({rating: rating})} //check
+                                // don't need fractions={0}
+                                ratingCount={5} //check
+                                showRating //check
+                            />
+                            <Input
+                                placeholder='Author' 
+                                /* ok, so Input and TextInput are like FlatList and ListItem? need to use inputComponent prop of Input to accept TextInput?FlatList = Input | ListItem = TextInput???  inputComponent={TextInput} instead of renderItem --> NO!!! as usual, over complicating... */
+                                leftIcon={
+                                    <Icon
+                                    name='user-o'
+                                    type='font-awesome'
+                                    value={this.state.author}
+                                    containerStyle={{paddingRight: 10}}
+                                    size={24}
+                                    color='black'
+                                    />
+                                }
+                                onChangeText={author => {this.setState({author: author})}}
+                            />
+                            <Input
+                                placeholder='Comment'
+                                leftIcon={
+                                    <Icon
+                                    name='comment-o'
+                                    type='font-awesome'
+                                    value={this.state.comments}
+                                    containerStyle={{paddingRight: 10}}
+                                    size={24}
+                                    color='black'
+                                    />
+                                }
+                                onChangeText={text => {this.setState({text: text})}}
+                            />
+                            <Button
+                                color='#5637DD'
+                                title='Submit'
+                                onPress={() => {
+                                    this.handleComment(campsiteId); //campsiteId argument in the right place??
+                                    this.resetForm();
+                                }} 
+                            />
+                            <View /* is this right place for this "inline style task 1" */ style={{margin: 10}}>
+                                <Button
+                                    onPress={() => {
+                                        this.toggleModal();
+                                        this.resetForm();
+                                    }}
+                                    color='#808080'
+                                    title='Cancel'
+                                />
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
             </ScrollView>
         );
     }
 }
 
+const styles = StyleSheet.create({
+    cardRow: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        flexDirection: 'row',
+        margin: 20
+    },
+    cardItem: {
+        flex: 1,
+        margin: 10
+    },
+    modalStyle: {
+        justifyContent: 'center',
+        margin: 20
+    }
+});
+
 export default connect(mapStateToProps, mapDispatchToProps)(CampsiteInfo);
+
+/*
+deleted from copied over reservation modal - still need? task 1
+<Text style={styles.modalTitle}>Search Campsite Reservations</Text>
+<Text style={styles.modalText}>Number of Campers: {this.state.campers}</Text>
+<Text style={styles.modalText}>Hike-In?: {this.state.hikeIn ? 'Yes' : 'No'}</Text>
+<Text style={styles.modalText}>Date: {this.state.date}</Text>
+*/
