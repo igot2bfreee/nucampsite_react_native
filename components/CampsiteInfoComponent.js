@@ -23,6 +23,8 @@ const mapDispatchToProps = {
 
 function RenderCampsite(props) {
 
+    //week 3 task 3
+    const recognizeComment = ({ dx }) => (dx > 200) ? true : false;
     const {campsite} = props;
 
     const view = React.createRef();
@@ -55,6 +57,10 @@ function RenderCampsite(props) {
                     ],
                     { cancelable: false }
                 );
+            }
+            //week 3 task 3
+            else if (recognizeComment(gestureState)) {
+                props.onShowModal();
             }
             return true;
         }
