@@ -153,7 +153,12 @@ export const addFavorite = campsiteId => ({
     payload: campsiteId
 });
 
-//task 3
+export const deleteFavorite = campsiteId => ({
+    type: ActionTypes.DELETE_FAVORITE,
+    payload: campsiteId
+}); 
+
+//week 2 task 3
 export const addComment = comment => ({
     type: ActionTypes.ADD_COMMENT,
     payload: comment
