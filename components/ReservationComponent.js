@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-import {
-    Text, View, StyleSheet,
-    Picker, Switch, Button, Alert
-} from 'react-native';
+import { Text, View, StyleSheet, Picker, Switch, Button, Alert } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import * as Animatable from 'react-native-animatable';
 
@@ -52,7 +49,6 @@ class Reservation extends Component {
 
     render() {
         return (
-            //week3task1
             <Animatable.View animation="zoomIn" delay={1000} duration={2000}>
                 <View style={styles.formRow}>
                     <Text style={styles.formLabel}>Number of Campers</Text>
