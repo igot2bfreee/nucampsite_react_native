@@ -155,7 +155,7 @@ class RegisterTab extends Component {
             });
             if (!capturedImage.cancelled) {
                 console.log(capturedImage);
-                this.processImage(capturedImage.uri)
+                this.processImage(capturedImage.uri);
             }
         }
     }
@@ -167,6 +167,21 @@ class RegisterTab extends Component {
         )
         console.log(processedImage);
         this.setState({ imageUrl: processedImage.uri })
+    }
+
+    getImageFromGallery = async () => {
+        const cameraRollPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
+        if (cameraRollPermission.status === 'granted') {
+            const capturedImage = await ImagePicker.launchImageLibraryAsync({
+                allowsEditing: true,
+                aspect: [1, 1]
+            });
+            if (!capturedImage.cancelled) {
+                this.processImage(capturedImage.uri)
+                console.log(capturedImage);
+            }
+        }
     }
 
     handleRegister() {
@@ -194,6 +209,10 @@ class RegisterTab extends Component {
                         <Button
                             title='Camera'
                             onPress={this.getImageFromCamera}
+                        />
+                        <Button
+                            title='Gallery'
+                            onPress={this.getImageFromGallery}
                         />
                     </View>
                     <Input
